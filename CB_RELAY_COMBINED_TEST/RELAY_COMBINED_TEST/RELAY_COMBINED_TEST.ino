@@ -99,7 +99,8 @@ void checkDown()
   // save the current state as the last state, for next time through the loop
   down_lastButtonState = down_buttonState;
 }
-
+TimedAction checkUpThread = TimedAction(50,checkUp);
+TimedAction checkDownThread = TimedAction(50,checkDown);
 void displayUserTempToLcd(){
 
   //Serial.print("i = ");
@@ -109,9 +110,8 @@ void displayUserTempToLcd(){
   lcd.setCursor(11,1);
   lcd.print(buttonPushCounter);
 
-  checkUpThread.check();
-  checkDownThread.check();
-
+  
+ 
    if( bPress){
        bPress = false;
       //lcd.setCursor(2,1);
@@ -119,9 +119,15 @@ void displayUserTempToLcd(){
       lcd.setCursor(2,1);
       lcd.print(buttonPushCounter);
    }
+  //checkUpThread.check();
+  //checkDownThread.check();
   }
 
+TimedAction displayUserTempToLcdThred = TimedAction(500,displayUserTempToLcd);
   void displayTempFromSensorToLcd(){
+    checkUpThread.check();
+  checkDownThread.check();
+   //displayUserTempToLcdThred.check();
   sensors.requestTemperatures(); // Send the command to get temperature readings
   lcd.setCursor(0,0);  // (col,row)
   lcd.print("now Temp=");
@@ -133,7 +139,7 @@ void displayUserTempToLcd(){
    //delay(1000);  while delay nothing else happens
     }
 
-void displayTempFromSensorToSerial{
+void displayTempFromSensorToSerial(){
   Serial.println(sensors.getTempCByIndex(0));
 }
 
@@ -159,11 +165,9 @@ void switchAllOnIfGreatorAllOffIFLess(){
 
 
 TimedAction displayTempFromSensorToLcdThread = TimedAction(500,displayTempFromSensorToLcd);
-TimedAction displayUserTempToLcdThred = TimedAction(500,displayUserTempToLcd);
 TimedAction displayTempFromSensorToSerialThread = TimedAction(500,displayTempFromSensorToSerial);
 TimedAction switchAllOnIfGreatorAllOffIFLessThread = TimedAction(1000,switchAllOnIfGreatorAllOffIFLess);
-TimedAction checkUpThread = TimedAction(50,checkUp);
-TimedAction checkDownThread = TimedAction(50,checkDown);
+
 
 
 
@@ -212,7 +216,7 @@ void loop() {
   checkDownThread.check();
   displayTempFromSensorToLcdThread.check();
   displayUserTempToLcdThred.check();
-  displayTempFromSensorToSerialThread.check();
+ // displayTempFromSensorToSerialThread.check();
   switchAllOnIfGreatorAllOffIFLessThread.check();
 }
 
