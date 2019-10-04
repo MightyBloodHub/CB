@@ -49,6 +49,8 @@ int R1source5v = 44;
 int R2source5v = 45;
 int source5v   = 46;
 
+float actualTemp = 0.0;
+
 
 void checkUp()
 {
@@ -61,15 +63,10 @@ void checkUp()
         bPress = true;
       // if the current state is HIGH then the button went from off to on:
       buttonPushCounter += 0.5;
-     // Serial.println("on");
-      //Serial.print("number of button pushes: ");
-      //Serial.println(buttonPushCounter);
     } else {
       // if the current state is LOW then the button went from on to off:
       //Serial.println("off");
     }
-    // Delay a little bit to avoid bouncing
-    // delay(50); no need becuase we thread it
   }
   // save the current state as the last state, for next time through the loop
   up_lastButtonState = up_buttonState;
@@ -85,59 +82,49 @@ void checkDown()
         bPress = true;
       // if the current state is HIGH then the button went from off to on:
       buttonPushCounter -= 0.5;
-
-      //Serial.println("on");
-      //Serial.print("number of button pushes: ");
-      //Serial.println(buttonPushCounter);
     } else {
       // if the current state is LOW then the button went from on to off:
       Serial.println("off");
     }
-    // Delay a little bit to avoid bouncing
-    // delay(50); no need becuase we thread it
   }
   // save the current state as the last state, for next time through the loop
   down_lastButtonState = down_buttonState;
 }
+TimedAction checkUpThread = TimedAction(50,checkUp);
+TimedAction checkDownThread = TimedAction(50,checkDown);
 
-void displayUserTempToLcd(){
+void displayDataToLcd(){
 
   //Serial.print("i = ");
   //Serial.println(i);
+  lcd.setCursor(0,0);  // (col,row)
+  lcd.print("now Temp= ");
+  lcd.print(sensors.getTempCByIndex(0));
   lcd.setCursor(0,1);
-  lcd.print("user Temp=");
+  lcd.print("user Temp= ");
   lcd.setCursor(11,1);
   lcd.print(buttonPushCounter);
 
-  checkUpThread.check();
-  checkDownThread.check();
-
+  
+ 
    if( bPress){
        bPress = false;
-      //lcd.setCursor(2,1);
-      //lcd.print("               ");
-      lcd.setCursor(2,1);
+      lcd.setCursor(11,1);
       lcd.print(buttonPushCounter);
    }
   }
 
-  void displayTempFromSensorToLcd(){
-  sensors.requestTemperatures(); // Send the command to get temperature readings
-  lcd.setCursor(0,0);  // (col,row)
-  lcd.print("now Temp=");
+TimedAction displayDataToLcdThred = TimedAction(500,displayDataToLcd);
 
-  lcd.setCursor(9,0);
-  lcd.print(sensors.getTempCByIndex(0)); // Why "byIndex"?
-   // You can have more than one DS18B20 on the same bus.
-   // 0 refers to the first IC on the wire
-   //delay(1000);  while delay nothing else happens
-    }
 
-void displayTempFromSensorToSerial{
+
+void updateTempFromSensor(){
+  sensors.requestTemperatures();
   Serial.println(sensors.getTempCByIndex(0));
 }
 
 void switchAllOnIfGreatorAllOffIFLess(){
+  //actualTemp = sensors.getTempCByIndex(0);
   if (buttonPushCounter<sensors.getTempCByIndex(0)) {
     //delay(1000);  // added this delay to avoid instant relays kick on!!
     switchRelay(1,0); //switch relay1 off
@@ -158,12 +145,9 @@ void switchAllOnIfGreatorAllOffIFLess(){
 }
 
 
-TimedAction displayTempFromSensorToLcdThread = TimedAction(500,displayTempFromSensorToLcd);
-TimedAction displayUserTempToLcdThred = TimedAction(500,displayUserTempToLcd);
-TimedAction displayTempFromSensorToSerialThread = TimedAction(500,displayTempFromSensorToSerial);
+TimedAction updateTempFromSensorThread = TimedAction(5000,updateTempFromSensor);
 TimedAction switchAllOnIfGreatorAllOffIFLessThread = TimedAction(1000,switchAllOnIfGreatorAllOffIFLess);
-TimedAction checkUpThread = TimedAction(50,checkUp);
-TimedAction checkDownThread = TimedAction(50,checkDown);
+
 
 
 
@@ -210,9 +194,8 @@ void loop() {
   // put your main code here, to run repeatedly:
   checkUpThread.check();
   checkDownThread.check();
-  displayTempFromSensorToLcdThread.check();
-  displayUserTempToLcdThred.check();
-  displayTempFromSensorToSerialThread.check();
+  displayDataToLcdThred.check();
+  updateTempFromSensorThread.check();
   switchAllOnIfGreatorAllOffIFLessThread.check();
 }
 
