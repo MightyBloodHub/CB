@@ -124,17 +124,18 @@ void updateTempFromSensor(){
 }
 
 void switchAllOnIfGreatorAllOffIFLess(){
-  //actualTemp = sensors.getTempCByIndex(0);
+  actualTemp = sensors.getTempCByIndex(0);
+  /*
   int tempInt = 0;
   if((sensors.getTempCByIndex(0)-(int)sensors.getTempCByIndex(0))< 0.5){
     tempInt = (int)sensors.getTempCByIndex(0);
   }else{
     tempInt = (int)sensors.getTempCByIndex(0) + 1;
   }
-  
+  */
   
  
-  if (buttonPushCounter<tempInt) {
+  if (buttonPushCounter<actualTemp) {
     //delay(1000);  // added this delay to avoid instant relays kick on!!
     switchRelay(1,0); //switch relay1 off
     switchRelay(2,0); //switch relay2 off
@@ -154,8 +155,8 @@ void switchAllOnIfGreatorAllOffIFLess(){
 }
 
 
-TimedAction updateTempFromSensorThread = TimedAction(20000,updateTempFromSensor);
-TimedAction switchAllOnIfGreatorAllOffIFLessThread = TimedAction(1000,switchAllOnIfGreatorAllOffIFLess);
+TimedAction updateTempFromSensorThread = TimedAction(5000,updateTempFromSensor);
+TimedAction switchAllOnIfGreatorAllOffIFLessThread = TimedAction((2.2*60000),switchAllOnIfGreatorAllOffIFLess);
 
 
 
