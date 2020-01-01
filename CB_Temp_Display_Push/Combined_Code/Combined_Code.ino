@@ -63,7 +63,10 @@ void pushButton(){
   sensors.requestTemperatures(); // Send the command to get temperature readings 
   lcd.setCursor(0,0);  // (col,row)
   lcd.print("now Temp=");
-  
+  //Serial.begin(9600) ;
+  //sensors.begin();
+  //Serial.print(sensors.getTempCByIndex(0)); 
+  //Serial.print('\n');
   lcd.setCursor(9,0);
   lcd.print(sensors.getTempCByIndex(0)); // Why "byIndex"?  
    // You can have more than one DS18B20 on the same bus.  
@@ -103,7 +106,7 @@ void loop() {
 
   tempThread.check();
   pushThread.check();
-  
+  Serial.print(sensors.getTempCByIndex(0)+'\n'+'\n');
   //pushButton();
  //tempSensor();
 }
