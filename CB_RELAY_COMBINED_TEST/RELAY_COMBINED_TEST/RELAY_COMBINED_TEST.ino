@@ -35,15 +35,20 @@ float down_lastButtonState = 0;     // previous state of the up button
 bool bPress = false;
 
     // relay 1 and 2 controlls FAN1
-int relay1 = 3;  // Grey
+int relay1 = 3; //   Grey
 int relay2 = 4;  // Purple
     // relay 3 and 4 controlls FAN2
-int relay3 = 5;  // blue
+// int relay3 = 5;  blue
 int relay4 = 6;  // green
     // relay 5 and 6 controlls water pump 1
-int relay5 = 10;  // blue
-int relay6 = 11;  // green
+// int relay5 = 10;  blue
+ //int relay6 = 11;  green
 
+int alarmSettingOneSwitch = 10:
+int alarmSettingTwoSwitch = 11 :
+int	alarmOut = 12:
+int alarmSettingOne = 28:
+int alarmSettingTwo = 36:
 
 int R1source5v = 44;
 int R2source5v = 45;
@@ -180,12 +185,21 @@ void setup() {
   pinMode(relay5, OUTPUT);
   pinMode(relay4, OUTPUT);
 
+   
+
+  pinMode(alarmOut, OUTPUT);
+  pinMode(alarmSettingOneSwitch, INPUT_PULLUP);
+  pinMode(alarmSettingTwoSwitch, INPUT_PULLUP);
+
   switchRelay(1,1); //switch relay1 on
   switchRelay(2,1); //switch relay2 on
   switchRelay(3,1); //switch relay3 on
   switchRelay(4,1); //switch relay4 on
   switchRelay(5,1); //switch relay5 on
   switchRelay(6,1); //switch relay6 on
+
+  switchAlarm(0) //alarm  off
+
   lcd.init();
 
   lcd.init();
@@ -206,6 +220,15 @@ void loop() {
   displayDataToLcdThred.check();
   updateTempFromSensorThread.check();
   switchAllOnIfGreatorAllOffIFLessThread.check();
+
+
+  //Test alarm
+  //switchAlarm(1) //alarm  onn
+  //switchAlarm(0) //alarm  off
+
+  
+  
+
 }
 
 bool isGreator()
@@ -236,4 +259,18 @@ void switchRelay(int N, bool C)
             if(C){digitalWrite(relay6, HIGH);}else{digitalWrite(relay6, LOW);}
             break;
    }
+
+  void switchAlarm(bool C)
+  {
+	  if (C)
+	  {
+		  digitalWrite(alarmOut, LOW);
+	  }
+	  else
+	  {
+		  digitalWrite(alarmOut, HIGH);
+	  }
+  }
+
 }
+
