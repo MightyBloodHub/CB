@@ -38,17 +38,17 @@ bool bPress = false;
 int relay1 = 3; //   Grey
 int relay2 = 4;  // Purple
     // relay 3 and 4 controlls FAN2
-// int relay3 = 5;  blue
+int relay3 = 5;  //blue
 int relay4 = 6;  // green
     // relay 5 and 6 controlls water pump 1
 // int relay5 = 10;  blue
  //int relay6 = 11;  green
 
-int alarmSettingOneSwitch = 10:
-int alarmSettingTwoSwitch = 11 :
-int	alarmOut = 12:
-int alarmSettingOne = 28:
-int alarmSettingTwo = 36:
+int alarmSettingOneSwitch = 10;
+int alarmSettingTwoSwitch = 11 ;
+int	alarmOut = 12;
+int alarmSettingOne = 28;
+int alarmSettingTwo = 36;
 
 int R1source5v = 44;
 int R2source5v = 45;
@@ -181,8 +181,8 @@ void setup() {
   pinMode(relay1, OUTPUT);
   pinMode(relay2, OUTPUT);
   pinMode(relay3, OUTPUT);
-  pinMode(relay6, OUTPUT);
-  pinMode(relay5, OUTPUT);
+  //pinMode(relay6, OUTPUT);
+  //pinMode(relay5, OUTPUT);
   pinMode(relay4, OUTPUT);
 
    
@@ -198,7 +198,7 @@ void setup() {
   switchRelay(5,1); //switch relay5 on
   switchRelay(6,1); //switch relay6 on
 
-  switchAlarm(0) //alarm  off
+  switchAlarm(0); //alarm  off
 
   lcd.init();
 
@@ -249,7 +249,7 @@ void switchRelay(int N, bool C)
       case 3 :
          if(C){digitalWrite(relay3, HIGH);}else{digitalWrite(relay3, LOW);}
          break;
-         case 4 :
+        /* case 4 :
            if(C){digitalWrite(relay4, HIGH);}else{digitalWrite(relay4, LOW);}
             break;
          case 5 :
@@ -257,20 +257,20 @@ void switchRelay(int N, bool C)
             break;
          case 6 :
             if(C){digitalWrite(relay6, HIGH);}else{digitalWrite(relay6, LOW);}
-            break;
+            break; */
    }
 
+  
+  }
   void switchAlarm(bool C)
   {
-	  if (C)
-	  {
-		  digitalWrite(alarmOut, LOW);
-	  }
-	  else
-	  {
-		  digitalWrite(alarmOut, HIGH);
-	  }
-  }
+    if (C)
+    {
+      digitalWrite(alarmOut, HIGH);
+    }
+    else
+    {
+      digitalWrite(alarmOut, LOW);
+    }
 
 }
-
