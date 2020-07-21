@@ -37,7 +37,7 @@ bool bPress = false;
     // relay 1 and 2 controlls FAN1
 int relay1 = 3; //   Grey
 int relay2 = 4;  // Purple
-    // relay 3 and 4 controlls FAN2
+    // relay 3 and 4 controlls FAN2//deleted by Al 
 int relay3 = 5;  //blue
 int relay4 = 6;  // green
     // relay 5 and 6 controlls water pump 1
