@@ -49,7 +49,7 @@ int relay4 = 6;  // green
 int alarmSettingSwitch = 10;
 //int alarmSettingTwoSwitch = 11 ;
 int	alarmOut = 12;
-int alarmSettingOne = 20;
+int alarmSettingOne = 28;  // was 20 Al fixed 21/8/2020
 int alarmSettingTwo = 36;
 
 int R1source5v = 44;
@@ -141,11 +141,11 @@ void updateTempFromSensor(){
   }else{
     tempInt = (int)sensors.getTempCByIndex(0) + 1;
   }*/
-  tempInt = 36; //delete this line
+  //tempInt = 36; //delete this line
   if( digitalRead(alarmSettingSwitch))
   {
     //switchAlarm(0);
-    if(tempInt >= alarmSettingOne)
+    if(tempInt >= alarmSettingOne)  //was alarmSetting One Al fixed 21/8/2020
     {
       switchAlarm(1);
     }else 
