@@ -254,7 +254,8 @@ void setup() {
  // EEPROM.put(eeAddress, f);
  
   EEPROM.get(eeAddress, tempPlaceHolderForTheEEPROM);
-  buttonPushCounter = tempPlaceHolderForTheEEPROM;
+  //uncomment just testing buttonPushCounter = tempPlaceHolderForTheEEPROM; this one has issue
+  
 }
 
 void loop() {
