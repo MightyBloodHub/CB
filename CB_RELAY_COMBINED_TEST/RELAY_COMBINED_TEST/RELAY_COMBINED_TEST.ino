@@ -50,7 +50,7 @@ int alarmSettingSwitch = 10;
 //int alarmSettingTwoSwitch = 11 ;
 int	alarmOut = 12;
 int alarmSettingOne = 28;  // was 20 Al fixed 21/8/2020
-int alarmSettingTwo = 36;
+int alarmSettingTwo = 32;
 
 int R1source5v = 44;
 int R2source5v = 45;
@@ -135,17 +135,17 @@ void updateTempFromSensor(){
   //Serial.println(sensors.getTempCByIndex(0));
 
   int tempInt = 0;
-/* //uncomment this 
+ //uncomment this 
   if((sensors.getTempCByIndex(0)-(int)sensors.getTempCByIndex(0))< 0.5){
     tempInt = (int)sensors.getTempCByIndex(0);
   }else{
     tempInt = (int)sensors.getTempCByIndex(0) + 1;
-  }*/
+  }
   //tempInt = 36; //delete this line
   if( digitalRead(alarmSettingSwitch))
   {
     //switchAlarm(0);
-    if(tempInt >= alarmSettingOne)  //was alarmSetting One Al fixed 21/8/2020
+    if(tempInt >= alarmSettingTwo)  //was alarmSetting One Al fixed 21/8/2020
     {
       switchAlarm(1);
     }else 
@@ -155,7 +155,7 @@ void updateTempFromSensor(){
   }else
   {
     //switchAlarm(1);
-    if(tempInt >= alarmSettingTwo)
+    if(tempInt >= alarmSettingOne)
     {
       switchAlarm(1);
     }else 
@@ -251,10 +251,11 @@ void setup() {
 
   lcd.backlight();
   float tempPlaceHolderForTheEEPROM = 0.000f;
- // EEPROM.put(eeAddress, f);
+  //EEPROM.put(eeAddress, f);
  
   EEPROM.get(eeAddress, tempPlaceHolderForTheEEPROM);
-  //uncomment just testing buttonPushCounter = tempPlaceHolderForTheEEPROM; this one has issue
+  //uncomment just testing 
+  buttonPushCounter = tempPlaceHolderForTheEEPROM; // this one has issue // now w...9/orks!!
   
 }
 
@@ -289,7 +290,7 @@ void switchRelay(int N, bool C)
         if(C){digitalWrite(relay1, HIGH);}else{digitalWrite(relay1, LOW);}
          break;
       case 2 :
-         if(C){digitalWrite(relay2, HIGH);}else{digitalWrite(relay3, LOW);}
+         if(C){digitalWrite(relay2, HIGH);}else{digitalWrite(relay2, LOW);}
          break;
       case 3 :
          if(C){digitalWrite(relay3, HIGH);}else{digitalWrite(relay3, LOW);}
