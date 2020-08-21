@@ -3,12 +3,14 @@
 #include <DallasTemperature.h>
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
+#include <EEPROM.h>
+
 
 LiquidCrystal_I2C lcd(0x27,16,2);  // set the LCD address to 0x27 for a 16 chars and 2 line display
 
 /********************************************************************/
 // Data wire is plugged into pin 2 on the Arduino
-#define ONE_WIRE_BUS 2
+#define ONE_WIRE_BUS 7 //was 2
 /********************************************************************/
 // Setup a oneWire instance to communicate with any OneWire devices
 
@@ -44,17 +46,18 @@ int relay4 = 6;  // green
 // int relay5 = 10;  blue
  //int relay6 = 11;  green
 
-int alarmSettingOneSwitch = 10;
-int alarmSettingTwoSwitch = 11 ;
+int alarmSettingSwitch = 10;
+//int alarmSettingTwoSwitch = 11 ;
 int	alarmOut = 12;
-int alarmSettingOne = 28;
+int alarmSettingOne = 20;
 int alarmSettingTwo = 36;
 
 int R1source5v = 44;
 int R2source5v = 45;
 int source5v   = 46;
-
 float actualTemp = 0.0;
+
+ int eeAddress = 0; //location er esnt to store in eeprom
 
 
 void checkUp()
@@ -72,6 +75,8 @@ void checkUp()
       // if the current state is LOW then the button went from on to off:
       //Serial.println("off");
     }
+      EEPROM.put(eeAddress, buttonPushCounter);
+      Serial.println(buttonPushCounter);
   }
   // save the current state as the last state, for next time through the loop
   up_lastButtonState = up_buttonState;
@@ -91,6 +96,8 @@ void checkDown()
       // if the current state is LOW then the button went from on to off:
       Serial.println("off");
     }
+     EEPROM.put(eeAddress, buttonPushCounter);
+      Serial.println(buttonPushCounter);
   }
   // save the current state as the last state, for next time through the loop
   down_lastButtonState = down_buttonState;
@@ -125,7 +132,39 @@ TimedAction displayDataToLcdThred = TimedAction(500,displayDataToLcd);
 
 void updateTempFromSensor(){
   sensors.requestTemperatures();
-  Serial.println(sensors.getTempCByIndex(0));
+  //Serial.println(sensors.getTempCByIndex(0));
+
+  int tempInt = 0;
+/* //uncomment this 
+  if((sensors.getTempCByIndex(0)-(int)sensors.getTempCByIndex(0))< 0.5){
+    tempInt = (int)sensors.getTempCByIndex(0);
+  }else{
+    tempInt = (int)sensors.getTempCByIndex(0) + 1;
+  }*/
+  tempInt = 36; //delete this line
+  if( digitalRead(alarmSettingSwitch))
+  {
+    //switchAlarm(0);
+    if(tempInt >= alarmSettingOne)
+    {
+      switchAlarm(1);
+    }else 
+    {
+      switchAlarm(0);
+    }
+  }else
+  {
+    //switchAlarm(1);
+    if(tempInt >= alarmSettingTwo)
+    {
+      switchAlarm(1);
+    }else 
+    {
+      switchAlarm(0);
+    }
+  }
+  
+   
 }
 
 void switchAllOnIfGreatorAllOffIFLess(){
@@ -188,8 +227,8 @@ void setup() {
    
 
   pinMode(alarmOut, OUTPUT);
-  pinMode(alarmSettingOneSwitch, INPUT_PULLUP);
-  pinMode(alarmSettingTwoSwitch, INPUT_PULLUP);
+  pinMode(alarmSettingSwitch, INPUT_PULLUP);
+  //pinMode(alarmSettingTwoSwitch, INPUT_PULLUP);
 
   switchRelay(1,1); //switch relay1 on
   switchRelay(2,1); //switch relay2 on
@@ -211,6 +250,11 @@ void setup() {
   pinMode( Down_buttonPin , INPUT_PULLUP);
 
   lcd.backlight();
+  float tempPlaceHolderForTheEEPROM = 0.000f;
+ // EEPROM.put(eeAddress, f);
+ 
+  EEPROM.get(eeAddress, tempPlaceHolderForTheEEPROM);
+  buttonPushCounter = tempPlaceHolderForTheEEPROM;
 }
 
 void loop() {
@@ -220,13 +264,13 @@ void loop() {
   displayDataToLcdThred.check();
   updateTempFromSensorThread.check();
   switchAllOnIfGreatorAllOffIFLessThread.check();
-
-
+  
   //Test alarm
   //switchAlarm(1) //alarm  onn
   //switchAlarm(0) //alarm  off
-
-  
+  float tmpF = 0.04;
+  EEPROM.get(eeAddress, tmpF);
+  Serial.println(tmpF,3);
   
 
 }
