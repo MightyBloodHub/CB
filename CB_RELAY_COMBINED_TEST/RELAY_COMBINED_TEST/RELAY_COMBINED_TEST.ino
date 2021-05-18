@@ -6,7 +6,7 @@
 #include <EEPROM.h>
 
 
-LiquidCrystal_I2C lcd(0x27,16,2);  // set the LCD address to 0x27 for a 16 chars and 2 line display
+LiquidCrystal_I2C lcd(0x27,20,4); //16,2);  // set the LCD address to 0x27 for a 16 chars and 2 line display
 
 /********************************************************************/
 // Data wire is plugged into pin 2 on the Arduino
@@ -116,6 +116,8 @@ void displayDataToLcd(){
   lcd.print("user Temp= ");
   lcd.setCursor(11,1);
   lcd.print(buttonPushCounter);
+   lcd.setCursor(0,2);
+  lcd.print("hum");
 
   
  
@@ -239,9 +241,9 @@ void setup() {
 
   switchAlarm(0); //alarm  off
 
-  lcd.init();
+  //lcd.init();
 
-  lcd.init();
+  lcd.begin(); //lcd.init();
 
   Serial.begin(9600) ;
   sensors.begin();
