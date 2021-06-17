@@ -1,5 +1,8 @@
 #include <TimedAction.h>
 #include <LiquidCrystal_I2C.h>
+#include <esp_now.h>
+#include <WiFi.h>
+
 
 int lcdColumns = 20;
 int lcdRows    =  4;
@@ -15,7 +18,7 @@ const int  Down_buttonPinT = 26;
 const int  Up_buttonPinH   = 25;
 const int  Down_buttonPinH = 33;
 
-// Variables will change:
+
 float buttonPushCounterT = 30;   // counter for the number of button presses
 float up_buttonStateT = 0;         // current state of the up button
 float up_lastButtonStateT = 0;     // previous state of the up button
@@ -110,29 +113,75 @@ TimedAction checkUpThread = TimedAction(50,checkUp);
 TimedAction checkDownThread = TimedAction(50,checkDown);
 
 
+// Structure example to receive data
+// Must match the sender structure
+typedef struct struct_message {
+  
+  float temp;    // when called store temperature in it
 
+  float hum;
+  
+} struct_message;
+
+
+// Create a struct_message called myData
+struct_message myData;
+
+// callback function that will be executed when data is received
+void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
+  memcpy(&myData, incomingData, sizeof(myData));
+
+  //Serial.print("temp=");
+  //Serial.println(myData.temp);
+  
+  //Serial.print(" RH%=");
+  //Serial.println(myData.hum);
+
+ 
+
+
+
+  
+}
 void displayDataToLcd(){
 
+  lcd.setCursor(0,0);
+  lcd.print("Room Temp= ");
+  lcd.setCursor(11,0);
+  lcd.print(myData.temp);
+  lcd.setCursor(16,0);
+  lcd.print("C");
+  
 
 
   lcd.setCursor(0,1);
   lcd.print("user Temp= ");
   lcd.setCursor(11,1);
   lcd.print(buttonPushCounterT);
+  lcd.setCursor(16,1);
+  lcd.print("C");
 
   lcd.setCursor(0,2);
-  lcd.print("user %RH= ");
+  lcd.print("Room %RH = ");
   lcd.setCursor(11,2);
+  lcd.print(myData.hum);
+  lcd.setCursor(16,2);
+  lcd.print("%");
+  
+  lcd.setCursor(0,3);
+  lcd.print("user %RH = ");
+  lcd.setCursor(11,3);
   lcd.print(buttonPushCounterH);
-
+  lcd.setCursor(16,3);
+  lcd.print("%");
 
   
  
-   if( bPress){
+  /* if( bPress){
        bPress = false;
-      lcd.setCursor(11,1);
+      //lcd.setCursor(11,1);
       lcd.print(buttonPushCounterT);
-   }
+   }  */
   }
 
 TimedAction displayDataToLcdThred = TimedAction(50,displayDataToLcd);
@@ -151,6 +200,18 @@ void setup() {
   pinMode( Down_buttonPinH , INPUT_PULLUP);
 
   lcd.backlight();
+
+   WiFi.mode(WIFI_STA);
+
+  // Init ESP-NOW
+  if (esp_now_init() != ESP_OK) {
+    Serial.println("Error initializing ESP-NOW");
+    return;
+  }
+  
+  // Once ESPNow is successfully Init, we will register for recv CB to
+  // get recv packer info
+  esp_now_register_recv_cb(OnDataRecv);
 }
 
 void loop() {
