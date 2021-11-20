@@ -2,7 +2,7 @@
 #include <LiquidCrystal_I2C.h>
 #include <esp_now.h>
 #include <WiFi.h>
-
+#include <Wire.h>
 
 int lcdColumns = 20;
 int lcdRows    =  4;
@@ -191,7 +191,9 @@ void setup() {
   Serial.begin(115200);
   lcd.begin(); //lcd.init();
 
-  
+  Wire.setClock(10000);         // Bush added to try to get rid of LCD crashing 10/23/2021
+          // got this error 'class TwoWire' has no member named 'SetClock'
+
 
   pinMode( Up_buttonPinT , INPUT_PULLUP);
   pinMode( Down_buttonPinT , INPUT_PULLUP);
